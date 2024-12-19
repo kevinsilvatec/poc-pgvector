@@ -1,13 +1,9 @@
 const OpenAI = require("openai");
 const { Pool } = require("pg");
 require("dotenv").config();
-
-// Configure a chave da API
-
 const openai = new OpenAI();
 openai.apiKey = process.env.OPENAI_API_KEY;
 
-// Configure o PostgreSQL
 const pool = new Pool({
   user: "teste",
   host: "localhost",
@@ -18,7 +14,6 @@ const pool = new Pool({
 
 (async () => {
   try {
-    // Obter produtos que ainda não têm embeddings
     const products = await pool.query(`
       SELECT id, name, description 
       FROM products 
@@ -29,8 +24,6 @@ const pool = new Pool({
 
     for (const product of products.rows) {
       const text = `${product.name} ${product.description}`;
-
-      // Gerar embedding com a OpenAI
       const response = await openai.embeddings.create({
         model: "text-embedding-ada-002",
         input: text,
@@ -52,7 +45,6 @@ const pool = new Pool({
   } catch (error) {
     console.error("Erro ao gerar embeddings:", error);
   } finally {
-    // Fechar conexão com o banco
     await pool.end();
   }
 })();
