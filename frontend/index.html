@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semantic Search</title>
+</head>
+
+<body>
+  <h1>Busca Semântica</h1>
+  <input type="text" id="searchQuery" placeholder="Digite sua busca...">
+  <button id="searchButton">Buscar</button>
+  <ul id="results"></ul>
+
+  <script>
+    document.getElementById("searchButton").addEventListener("click", async () => {
+      const query = document.getElementById("searchQuery").value;
+
+      try {
+        const response = await fetch(`http://localhost:3000/search?query=${query}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          }
+        });
+
+        const data = await response.json();
+        const results = data.results;
+
+        const resultsList = document.getElementById("results");
+        resultsList.innerHTML = "";
+
+        results.forEach((item) => {
+          const li = document.createElement("li");
+          li.textContent = `${item.name}: ${item.description} - SCORE DE SEMELHANÇA: ${item.score}`;
+          resultsList.appendChild(li);
+        });
+      } catch (error) {
+        console.error("Erro ao buscar:", error);
+      }
+    });
+  </script>
+</body>
+
+</html>
